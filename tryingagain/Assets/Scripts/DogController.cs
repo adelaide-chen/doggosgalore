@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Animator))]
+[System.Serializable]
 public class DogController : MonoBehaviour {
 
     public enum DogState { Chase, Retrieve };
@@ -33,26 +34,28 @@ public class DogController : MonoBehaviour {
 	
 	void FixedUpdate () {
         float distance = Vector3.Distance(transform.position, agent.destination);
-        Debug.Log(distance);
-        if (distance < stopDistance || distance == float.PositiveInfinity) {
+        //Debug.Log(distance);
+        if (distance < stopDistance || distance == float.PositiveInfinity) { //but how does he escape
             agent.enabled = false;
             if (state == DogState.Chase) {
-                Debug.Log("Run to drink (chase)");
+                //Debug.Log("Run to drink (chase)");
                 animator.SetInteger("state", (int)AnimatorTransition.runToDrink);
+                state = DogState.Retrieve;
+                agent.enabled = true;
             }
             else if (state == DogState.Retrieve) {
-                Debug.Log("Run to idle (retrieve)");
+                //Debug.Log("Run to idle (retrieve)");
                 animator.SetInteger("state", (int)AnimatorTransition.runToIdle);
             }
         }
         else {
             agent.enabled = true;
             if (state == DogState.Chase) {
-                Debug.Log("Idle to run (chase)");
+                //Debug.Log("Idle to run (chase)");
                 animator.SetInteger("state", (int)AnimatorTransition.idleToRun);
             }
             else if (state == DogState.Retrieve) {
-                Debug.Log("Idle to run (retrieve)");
+                //Debug.Log("Idle to run (retrieve)");
                 animator.SetInteger("state", (int)AnimatorTransition.idleToRun);
             }
         }
