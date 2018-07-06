@@ -12,17 +12,25 @@ public class DogController : MonoBehaviour {
     public enum AnimatorTransition { idleToRun, runToIdle, runToDrink, drinkToRun };
     public DogState state;
     public float stopDistance = 1.0f;
-    public Transform ballTransform;
-    public Transform headTransform;
+    public GameObject ball;
+    public Transform mouth;
+    public Transform cameraTransform;
 
     Animator animator;
     NavMeshAgent agent;
+
+    float animPercent {
+        get {
+            AnimatorStateInfo animatorInfo = animator.GetCurrentAnimatorStateInfo(0);
+            return animatorInfo.normalizedTime;
+        }
+    }
     
 	// Use this for initialization
 	void Start () {
         animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
-
+        
         // Code to trigger action on startup
         if (state == DogState.Chase) {
             Fetch();
@@ -34,40 +42,57 @@ public class DogController : MonoBehaviour {
 	
 	void FixedUpdate () {
         float distance = Vector3.Distance(transform.position, agent.destination);
-        //Debug.Log(distance);
-        if (distance < stopDistance || distance == float.PositiveInfinity) { //but how does he escape
-            agent.enabled = false;
-            if (state == DogState.Chase) {
-                //Debug.Log("Run to drink (chase)");
-                animator.SetInteger("state", (int)AnimatorTransition.runToDrink);
-                state = DogState.Retrieve;
-                agent.enabled = true;
-            }
-            else if (state == DogState.Retrieve) {
-                //Debug.Log("Run to idle (retrieve)");
-                animator.SetInteger("state", (int)AnimatorTransition.runToIdle);
-            }
+        Debug.Log(animPercent);
+
+        switch (state)
+        {
+            case DogState.Chase:
+                if (distance < stopDistance || distance == float.PositiveInfinity)
+                {
+                    agent.enabled = false;
+                    animator.SetInteger("state", (int)AnimatorTransition.runToDrink);
+                    if (animPercent >= 0.3f && animator.GetCurrentAnimatorStateInfo(0).IsName("PugDrink"))
+                    {
+                        Retrieve();
+                    }
+                }
+                else
+                {
+                    animator.SetInteger("state", (int)AnimatorTransition.idleToRun);
+                }
+                break;
+            case DogState.Retrieve:
+                ball.transform.position = mouth.position;
+                ball.transform.rotation = mouth.rotation;
+                if (distance < stopDistance || distance == float.PositiveInfinity) {
+                    Arrive();
+                }
+                else {
+                    animator.SetInteger("state", (int)AnimatorTransition.drinkToRun);
+                }
+                break;
+            default:
+                break;
         }
-        else {
-            agent.enabled = true;
-            if (state == DogState.Chase) {
-                //Debug.Log("Idle to run (chase)");
-                animator.SetInteger("state", (int)AnimatorTransition.idleToRun);
-            }
-            else if (state == DogState.Retrieve) {
-                //Debug.Log("Idle to run (retrieve)");
-                animator.SetInteger("state", (int)AnimatorTransition.idleToRun);
-            }
-        }
+        
 	}
 
-    public void Fetch() {
+    void Fetch() {
         state = DogState.Chase;
-        agent.destination = ballTransform.position;
+        agent.enabled = true;
+        agent.destination = ball.transform.position;
     }
 
-    public void Retrieve() {
+    void Retrieve() {
         state = DogState.Retrieve;
-        agent.destination = headTransform.position;
+        agent.enabled = true;
+        agent.destination = cameraTransform.position;
+        Destroy(ball.GetComponent<Rigidbody>());
+    }
+
+    void Arrive() {
+        agent.enabled = false;
+        animator.SetInteger("state", (int)AnimatorTransition.runToIdle);
+        //ball.AddComponent<Rigidbody>();
     }
 }
