@@ -15,6 +15,7 @@ public class DogController : MonoBehaviour {
     public GameObject ball;
     public Transform mouth;
     public Transform cameraTransform;
+    RWVR_InteractionController controller;
 
     Animator animator;
     NavMeshAgent agent;
@@ -65,7 +66,13 @@ public class DogController : MonoBehaviour {
                 ball.transform.position = mouth.position;
                 ball.transform.rotation = mouth.rotation;
                 if (distance < stopDistance || distance == float.PositiveInfinity) {
-                    Arrive();
+                    agent.enabled = false;
+                    animator.SetInteger("state", (int)AnimatorTransition.runToIdle);
+                    if (controller.pressed)
+                    {
+                        Instantiate(ball.GetComponent<Rigidbody>());
+                        Fetch();
+                    }
                 }
                 else {
                     animator.SetInteger("state", (int)AnimatorTransition.drinkToRun);
@@ -88,11 +95,5 @@ public class DogController : MonoBehaviour {
         agent.enabled = true;
         agent.destination = cameraTransform.position;
         Destroy(ball.GetComponent<Rigidbody>());
-    }
-
-    void Arrive() {
-        agent.enabled = false;
-        animator.SetInteger("state", (int)AnimatorTransition.runToIdle);
-        //ball.AddComponent<Rigidbody>();
     }
 }

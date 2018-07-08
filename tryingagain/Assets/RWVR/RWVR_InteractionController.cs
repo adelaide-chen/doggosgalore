@@ -5,6 +5,7 @@ using UnityEngine;
 public class RWVR_InteractionController : MonoBehaviour {
     public Transform snapColliderOrigin; // 1
     public GameObject ControllerModel; // 2
+    public bool pressed;
 
     [HideInInspector]
     public Vector3 velocity;
@@ -52,6 +53,7 @@ public class RWVR_InteractionController : MonoBehaviour {
         if (Controller.GetHairTriggerDown())
         {
             print("triggered - in more ways than one");
+            pressed = true;
             CheckForInteractionObject();
         }
 
@@ -82,16 +84,6 @@ public class RWVR_InteractionController : MonoBehaviour {
     void FixedUpdate()
     {
         UpdateVelocity();
-    }
-
-    public void HideControllerModel()
-    {
-        ControllerModel.SetActive(false);
-    }
-
-    public void ShowControllerModel()
-    {
-        ControllerModel.SetActive(true);
     }
 
     public void Vibrate(ushort strength)
