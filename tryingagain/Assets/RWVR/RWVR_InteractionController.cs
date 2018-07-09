@@ -33,14 +33,11 @@ public class RWVR_InteractionController : MonoBehaviour {
     private void CheckForInteractionObject()
     {
         Collider[] overlappedColliders = Physics.OverlapSphere(snapColliderOrigin.position, snapColliderOrigin.lossyScale.x / 2f);
-        print("entered function");
-        print(overlappedColliders);
         foreach (Collider overlappedCollider in overlappedColliders)
         {
-            print("entered for loop");
+            pressed = true;
             if (overlappedCollider.CompareTag("InteractionObject") && overlappedCollider.GetComponent<RWVR_InteractionObject>().IsFree())
             {
-                print("entered if statement");
                 objectBeingInteractedWith = overlappedCollider.GetComponent<RWVR_InteractionObject>();
                 objectBeingInteractedWith.OnTriggerWasPressed(this);
                 return;
@@ -53,7 +50,6 @@ public class RWVR_InteractionController : MonoBehaviour {
         if (Controller.GetHairTriggerDown())
         {
             print("triggered - in more ways than one");
-            pressed = true;
             CheckForInteractionObject();
         }
 
@@ -67,6 +63,7 @@ public class RWVR_InteractionController : MonoBehaviour {
 
         if (Controller.GetHairTriggerUp())
         {
+            pressed = false;
             if (objectBeingInteractedWith)
             {
                 objectBeingInteractedWith.OnTriggerWasReleased(this);
