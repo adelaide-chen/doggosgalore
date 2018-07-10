@@ -49,7 +49,6 @@ public class RWVR_InteractionController : MonoBehaviour {
     {
         if (Controller.GetHairTriggerDown())
         {
-            print("triggered - in more ways than one");
             CheckForInteractionObject();
         }
 
