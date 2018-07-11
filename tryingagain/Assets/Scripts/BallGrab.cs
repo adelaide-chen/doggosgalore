@@ -9,14 +9,13 @@ public class BallGrab : RWVR_SimpleGrab {
     public override void OnTriggerWasPressed(RWVR_InteractionController controller)
     {
         base.OnTriggerWasPressed(controller);
-        dogController.Idle();
+        dogController.Stop();
     }
 
     public override void OnTriggerWasReleased(RWVR_InteractionController controller)
     {
         base.OnTriggerWasReleased(controller);
-        Debug.Log("there");
-        dogController.Chase();
+        dogController.Go();
     }
 
 }

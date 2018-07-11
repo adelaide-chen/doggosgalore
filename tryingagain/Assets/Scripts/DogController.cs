@@ -9,18 +9,19 @@ using UnityEngine.AI;
 public class DogController : MonoBehaviour
 {
 
-    public enum DogState { Idle, Chase, Retrieve };
+    public enum DogState { Chase, Retrieve };
     public enum AnimatorTransition { idleToRun, runToIdle, runToDrink, drinkToRun };
-    public DogState state;
     public float ballStopDistance;
     public float playerStopDistance;
-    public GameObject ball;
-    public Rigidbody ballRB;
     public Transform mouth;
-    public Transform cameraTransform;
+    public Transform player;
+    public Transform ball;
 
     Animator animator;
     NavMeshAgent agent;
+    Rigidbody ballRB;
+    Transform target;
+    bool hasBall;
 
     float animPercent
     {
@@ -36,92 +37,78 @@ public class DogController : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
-
-        // Code to trigger action on startup
-        if (state == DogState.Idle)
-        {
-            Idle();
-        }
-        else if (state == DogState.Chase)
-        {
-            Chase();
-        }
-        else if (state == DogState.Retrieve)
-        {
-            Retrieve();
-        }
+        ballRB = ball.GetComponent<Rigidbody>();
+        target = ball;
+        hasBall = false;
     }
 
     void FixedUpdate()
     {
+        agent.destination = target.position;
+
         //float distance = CalculatePathDistance(agent);
-        float distance = Vector3.Distance(transform.position, agent.destination);
-        Debug.Log(distance);
-        Debug.Log((AnimatorTransition)animator.GetInteger("state"));
-        switch (state)
+        float distance = Vector3.Distance(transform.position, target.position);
+        // Change this later!
+        float xzDistance = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(target.position.x, target.position.z));
+
+        if (target == ball)
         {
-            case DogState.Idle:
+            if (distance < ballStopDistance)
+            {
+                agent.isStopped = true;
+                animator.SetInteger("state", (int)AnimatorTransition.runToDrink);
+                // What if idle to drink?
+                if (animPercent >= .3f && animator.GetCurrentAnimatorStateInfo(0).IsName("PugDrink"))
+                {
+                    target = player;
+                    hasBall = true;
+                    ballRB.isKinematic = true;
+                    agent.isStopped = false;
+                }
+            }
+            else
+            {
+                agent.isStopped = false;
+                animator.SetInteger("state", (int)AnimatorTransition.idleToRun);
+            }
+        }
+        else if (target == player)
+        {
+            if (xzDistance < playerStopDistance)
+            {
+                agent.isStopped = true;
+                // What if drinking when less than playerStopDistance?
                 animator.SetInteger("state", (int)AnimatorTransition.runToIdle);
-                if (distance > playerStopDistance && distance != Mathf.Infinity)
-                {
-                    Chase();
-                }
-                break;
-            case DogState.Chase:
-                if (distance < ballStopDistance || distance == Mathf.Infinity) {
-                    agent.enabled = false;
-                    animator.SetInteger("state", (int)AnimatorTransition.runToDrink);
-                    if (animPercent >= 0.3f && animator.GetCurrentAnimatorStateInfo(0).IsName("PugDrink"))
-                    {
-                        Retrieve();
-                    }
-                }
-                else
-                {
-                    animator.SetInteger("state", (int)AnimatorTransition.idleToRun);
-                }
-                break;
-            case DogState.Retrieve:
-                ball.transform.position = mouth.position;
-                ball.transform.rotation = mouth.rotation;
-                if (distance < playerStopDistance || distance == Mathf.Infinity)
-                {
-                    animator.SetInteger("state", (int)AnimatorTransition.runToIdle);
-                    Debug.Log("here");
-                    agent.enabled = false;
-                }
-                else
-                {
-                    animator.SetInteger("state", (int)AnimatorTransition.drinkToRun);
-                    Debug.Log("there");
-                }
-                break;
-            default:
-                break;
+            }
+            else
+            {
+                agent.isStopped = false;
+                animator.SetInteger("state", (int)AnimatorTransition.drinkToRun);
+            }
+            if (hasBall)
+            {
+                ball.position = mouth.position;
+                ball.rotation = mouth.rotation;
+            }
+        }
+        else
+        {
+            // Do nothing
+            animator.SetInteger("state", (int)AnimatorTransition.runToIdle);
         }
 
     }
 
-    public void Idle()
+    public void Stop()
     {
+        target = transform;
         ballRB.isKinematic = false;
-        state = DogState.Idle;
+        hasBall = false;
     }
 
-    public void Chase()
+    public void Go()
     {
-        ballRB.isKinematic = false;
-        agent.enabled = true;
-        agent.destination = ball.transform.position;
-        state = DogState.Chase;
-    }
-
-    public void Retrieve()
-    {
-        ballRB.isKinematic = true;
-        agent.enabled = true;
-        agent.destination = cameraTransform.position;
-        state = DogState.Retrieve;
+        target = ball;
     }
 
     /*private float CalculatePathDistance(NavMeshAgent agent)
