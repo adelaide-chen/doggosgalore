@@ -5,7 +5,6 @@ using UnityEngine;
 public class RWVR_InteractionController : MonoBehaviour {
     public Transform snapColliderOrigin; // 1
     public GameObject ControllerModel; // 2
-    public bool pressed;
 
     [HideInInspector]
     public Vector3 velocity;
@@ -35,7 +34,6 @@ public class RWVR_InteractionController : MonoBehaviour {
         Collider[] overlappedColliders = Physics.OverlapSphere(snapColliderOrigin.position, snapColliderOrigin.lossyScale.x / 2f);
         foreach (Collider overlappedCollider in overlappedColliders)
         {
-            pressed = true;
             if (overlappedCollider.CompareTag("InteractionObject") && overlappedCollider.GetComponent<RWVR_InteractionObject>().IsFree())
             {
                 objectBeingInteractedWith = overlappedCollider.GetComponent<RWVR_InteractionObject>();
@@ -62,7 +60,6 @@ public class RWVR_InteractionController : MonoBehaviour {
 
         if (Controller.GetHairTriggerUp())
         {
-            pressed = false;
             if (objectBeingInteractedWith)
             {
                 objectBeingInteractedWith.OnTriggerWasReleased(this);

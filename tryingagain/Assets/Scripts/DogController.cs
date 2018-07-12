@@ -10,7 +10,7 @@ public class DogController : MonoBehaviour
 {
 
     public enum DogState { Chase, Retrieve };
-    public enum AnimatorTransition { idleToRun, runToIdle, runToDrink, drinkToRun };
+    public enum AnimatorTransition { idleToRun, runToIdle, runToDrink, drinkToRun, idleToDrink, drinkToIdle };
     public float ballStopDistance;
     public float playerStopDistance;
     public Transform mouth;
@@ -60,6 +60,7 @@ public class DogController : MonoBehaviour
                 // What if idle to drink?
                 if (animPercent >= .3f && animator.GetCurrentAnimatorStateInfo(0).IsName("PugDrink"))
                 {
+                    Debug.Log("transition");
                     target = player;
                     hasBall = true;
                     ballRB.isKinematic = true;
