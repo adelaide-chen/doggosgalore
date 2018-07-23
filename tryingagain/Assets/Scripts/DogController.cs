@@ -56,11 +56,16 @@ public class DogController : MonoBehaviour
             if (distance < ballStopDistance)
             {
                 agent.isStopped = true;
-                animator.SetInteger("state", (int)AnimatorTransition.runToDrink);
-                // What if idle to drink?
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("PugRun"))
+                {
+                    animator.SetInteger("state", (int)AnimatorTransition.runToDrink);
+                }
+                else if (animator.GetCurrentAnimatorStateInfo(0).IsName("PugIdle"))
+                {
+                    animator.SetInteger("state", (int)AnimatorTransition.idleToDrink);
+                }
                 if (animPercent >= .3f && animator.GetCurrentAnimatorStateInfo(0).IsName("PugDrink"))
                 {
-                    Debug.Log("transition");
                     target = player;
                     hasBall = true;
                     ballRB.isKinematic = true;
@@ -78,8 +83,14 @@ public class DogController : MonoBehaviour
             if (xzDistance < playerStopDistance)
             {
                 agent.isStopped = true;
-                // What if drinking when less than playerStopDistance?
-                animator.SetInteger("state", (int)AnimatorTransition.runToIdle);
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("PugRun"))
+                {
+                    animator.SetInteger("state", (int)AnimatorTransition.runToIdle);
+                }
+                else if (animator.GetCurrentAnimatorStateInfo(0).IsName("PugDrink"))
+                {
+                    animator.SetInteger("state", (int)AnimatorTransition.drinkToIdle);
+                }
             }
             else
             {
