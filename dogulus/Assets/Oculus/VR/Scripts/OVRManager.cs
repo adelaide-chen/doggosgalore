@@ -727,7 +727,7 @@ public class OVRManager : MonoBehaviour
 	[Header("Tracking")]
 	[SerializeField]
 	[Tooltip("Defines the current tracking origin type.")]
-	private OVRManager.TrackingOrigin _trackingOriginType = OVRManager.TrackingOrigin.EyeLevel;
+	private OVRManager.TrackingOrigin _trackingOriginType = OVRManager.TrackingOrigin.FloorLevel;
 	/// <summary>
 	/// Defines the current tracking origin type.
 	/// </summary>
