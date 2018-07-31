@@ -305,7 +305,7 @@ PlayerSettings:
   - m_BuildTarget: Standalone
     m_Enabled: 1
     m_Devices:
-    - Oculus
+    - OpenVR
   - m_BuildTarget: Tizen
     m_Enabled: 0
     m_Devices: []
@@ -625,7 +625,7 @@ PlayerSettings:
   webGLUseWasm: 0
   webGLCompressionFormat: 1
   scriptingDefineSymbols:
-    1: CROSS_PLATFORM_INPUT;UNITY_CCU;ENABLE_STEAMVR_INPUT;ENABLE_OVR_INPUT;INCLUDE_TEXT_MESH_PRO
+    1: CROSS_PLATFORM_INPUT;NVR_Oculus;NVR_SteamVR
     4: CROSS_PLATFORM_INPUT;MOBILE_INPUT
     7: CROSS_PLATFORM_INPUT;MOBILE_INPUT
     14: MOBILE_INPUT

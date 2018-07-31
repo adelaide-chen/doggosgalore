@@ -63,11 +63,9 @@ public class OVRGrabber : MonoBehaviour
     protected float m_prevFlex;
 	protected OVRGrabbable m_grabbedObj = null;
     protected Vector3 m_grabbedObjectPosOff;
-    protected Quaternion m_grabbedObjectRotOff = Quaternion.identity;
+    protected Quaternion m_grabbedObjectRotOff;
 	protected Dictionary<OVRGrabbable, int> m_grabCandidates = new Dictionary<OVRGrabbable, int>();
 	protected bool operatingWithoutOVRCameraRig = true;
-
-    public DogController dogController;
 
     /// <summary>
     /// The currently grabbed object.
@@ -176,8 +174,6 @@ public class OVRGrabber : MonoBehaviour
         int refCount = 0;
         m_grabCandidates.TryGetValue(grabbable, out refCount);
         m_grabCandidates[grabbable] = refCount + 1;
-
-        //dogController.Stop();
     }
 
     void OnTriggerExit(Collider otherCollider)
@@ -201,8 +197,6 @@ public class OVRGrabber : MonoBehaviour
         {
             m_grabCandidates.Remove(grabbable);
         }
-
-        //dogController.Go();
     }
 
     protected void CheckForGrabOrRelease(float prevFlex)
@@ -210,12 +204,10 @@ public class OVRGrabber : MonoBehaviour
         if ((m_prevFlex >= grabBegin) && (prevFlex < grabBegin))
         {
             GrabBegin();
-            //dogController.Stop();
         }
         else if ((m_prevFlex <= grabEnd) && (prevFlex > grabEnd))
         {
             GrabEnd();
-            //dogController.Go();
         }
     }
 

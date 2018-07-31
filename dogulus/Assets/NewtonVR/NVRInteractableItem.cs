@@ -38,6 +38,8 @@ namespace NewtonVR
 
         protected Dictionary<Collider, PhysicMaterial> MaterialCache = new Dictionary<Collider, PhysicMaterial>();
 
+        public DogController dogController;
+
         protected override void Awake()
         {
             base.Awake();
@@ -248,6 +250,8 @@ namespace NewtonVR
         {
             base.BeginInteraction(hand);
 
+            dogController.Stop();
+
             StartingDrag = Rigidbody.drag;
             StartingAngularDrag = Rigidbody.angularDrag;
             Rigidbody.drag = 0;
@@ -272,6 +276,8 @@ namespace NewtonVR
         public override void EndInteraction(NVRHand hand)
         {
             base.EndInteraction(hand);
+
+            dogController.Go();
 
             if (hand == null)
             {
