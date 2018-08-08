@@ -16,7 +16,6 @@ public class DogController : MonoBehaviour
     public Transform mouth;
     public Transform player;
     public Transform ball;
-    public Transform dog;
 
     Animator animator;
     NavMeshAgent agent;
@@ -50,7 +49,7 @@ public class DogController : MonoBehaviour
         //float distance = CalculatePathDistance(agent);
         float distance = Vector3.Distance(transform.position, target.position);
         // Change this later!
-        float xzDistance = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(target.position.x, target.position.z));
+        float xzDistance = Vector2.Distance(new Vector2(mouth.position.x, mouth.position.z), new Vector2(target.position.x, target.position.z));
 
         if (target == ball)
         {
@@ -84,7 +83,6 @@ public class DogController : MonoBehaviour
             if (xzDistance < playerStopDistance)
             {
                 agent.isStopped = true;
-                //dog.transform.LookAt(target);
                 if (animator.GetCurrentAnimatorStateInfo(0).IsName("PugRun"))
                 {
                     animator.SetInteger("state", (int)AnimatorTransition.runToIdle);

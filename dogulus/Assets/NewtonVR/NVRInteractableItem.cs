@@ -8,6 +8,8 @@ namespace NewtonVR
 {
     public class NVRInteractableItem : NVRInteractable
     {
+        public DogController dog;
+
         private const float MaxVelocityChange = 10f;
         private const float MaxAngularVelocityChange = 20f;
         private const float VelocityMagic = 6000f;
@@ -37,8 +39,6 @@ namespace NewtonVR
         protected float StartingAngularDrag = -1;
 
         protected Dictionary<Collider, PhysicMaterial> MaterialCache = new Dictionary<Collider, PhysicMaterial>();
-
-        public DogController dogController;
 
         protected override void Awake()
         {
@@ -250,7 +250,7 @@ namespace NewtonVR
         {
             base.BeginInteraction(hand);
 
-            dogController.Stop();
+            dog.Stop();
 
             StartingDrag = Rigidbody.drag;
             StartingAngularDrag = Rigidbody.angularDrag;
@@ -277,7 +277,7 @@ namespace NewtonVR
         {
             base.EndInteraction(hand);
 
-            dogController.Go();
+            dog.Go();
 
             if (hand == null)
             {
